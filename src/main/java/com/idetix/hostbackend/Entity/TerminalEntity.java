@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "Terminal_Entity_TBL")
 public class TerminalEntity {
     @Id
-    @Column(name="RANDID", unique = true, columnDefinition = "VARCHAR(250)")
-    private String randID;
+    @Column(name="TERMINALID", unique = true, columnDefinition = "VARCHAR(250)")
     private String terminalID;
+    private String randID;
 }

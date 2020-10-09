@@ -7,5 +7,5 @@ import java.util.List;
 
 
 public interface TerminalEntityRepository extends JpaRepository<TerminalEntity, String > {
-    List<TerminalEntity> findByTerminalID(String terminalId);
+    List<TerminalEntity> findByRandID(String terminalId);
 }
