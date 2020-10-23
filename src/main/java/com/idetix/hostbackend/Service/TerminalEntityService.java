@@ -4,7 +4,8 @@ import com.idetix.hostbackend.Entity.Exceptions.AllreadyRegisteredException;
 import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Repository.TerminalEntityRepository;
-import com.idetix.hostbackend.Service.blockchain.BlockchainService;
+import com.idetix.hostbackend.Service.Blockchain.BlockchainService;
+import com.idetix.hostbackend.Service.Security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ public class TerminalEntityService {
     private TerminalEntityRepository repository;
     @Autowired
     private BlockchainService blockchainService;
+    @Autowired
+    private SecurityService securityService;
     private final String secret;
 
     @Autowired
@@ -47,27 +50,11 @@ public class TerminalEntityService {
 
 
     private String getNewId(){
-        String candidateId = getAlphaNumericString(42);
+        String candidateId = securityService.getAlphaNumericString(42);
         while (repository.findByRandID(candidateId).size()!= 0){
-            candidateId = getAlphaNumericString(42);
+            candidateId = securityService.getAlphaNumericString(42);
         }
         return candidateId;
-    }
-
-    private String getAlphaNumericString(int n) {
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "0123456789"
-                    + "abcdefghijklmnopqrstuvxyz";
-
-        StringBuilder sb = new StringBuilder(n);
-        for (int i = 0; i < n; i++) {
-            int index
-                    = (int) (AlphaNumericString.length()
-                    * Math.random());
-            sb.append(AlphaNumericString
-                    .charAt(index));
-        }
-        return sb.toString();
     }
 
 }
