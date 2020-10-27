@@ -60,7 +60,7 @@ After that, the terminal can request a new random string via this post:
 
 | Parameter       | Value                       |
 |-----------------|-----------------------------|
-| URL             | "/GetNewSecretCode"         |
+| URL             | "/NewSecretCode"         |
 | UUID terminalId | terminal ID of the terminal |
 |                 |                             |
 | Return          | TerminalEntity              |
