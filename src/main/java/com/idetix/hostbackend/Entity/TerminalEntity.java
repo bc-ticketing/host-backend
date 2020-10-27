@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +16,13 @@ import javax.persistence.Table;
 @Table(name = "Terminal_Entity_TBL")
 public class TerminalEntity {
     @Id
-    @Column(name="TERMINALID", unique = true, columnDefinition = "VARCHAR(250)")
-    private String terminalID;
-    private String randID;
+    @GeneratedValue
+    @Column(name="TERMINALID", unique = true)
+    private UUID terminalId;
+    private String randId;
+    private ArrayList<String> ticketType;
+    private String areaAccessTo;
+    private int numberOfTickets;
+    private boolean responseDone;
+    private boolean accessAllowed;
 }

@@ -21,6 +21,7 @@ Following is the representation of Terminal in the backend:
 | String       | randID        | Random Value presented to guest to sign                             | current length 42              |
 | List<String> | ticketType    | List of ticket types required to access area controlled by terminal | empty list if general entrance |
 | String       | areaAccessTo  | Area the guest is in, after he passed this terminal                 |                                |
+int numberOfTickets
 | boolean      | responseDone  | flag to save whether a response has been done to this randID        | default false                  |
 | boolean      | accessAllowed | flag to indicate, whether the guest is allowed to enter             | default false                  |
 
