@@ -22,8 +22,8 @@ Following is the representation of Terminal in the backend:
 | List<String>  | ticketType      | List of ticket types required to access area controlled by terminal | empty list if general entrance |
 | String        | areaAccessTo    | Area the guest is in, after he passed this terminal                 |                                |
 | int           | numberOfTickets | Number of Tickets per Request                                       |                                |
-| RequestStatus | requestStatus   | flag to save whether a response has been done to this randID        | default false                  |
-| boolean       | accessAllowed   | flag to indicate, whether the guest is allowed to enter             | default false                  |
+| RequestStatus | requestStatus   | flag to save whether a response has been done to this randID        | PENDING,GRANTED,DENIED         |
+
 
 A Terminal uses the following Post to register :
 
