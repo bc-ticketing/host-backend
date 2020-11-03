@@ -5,7 +5,10 @@ import com.idetix.hostbackend.Entity.Exceptions.AllreadyRegisteredException;
 import com.idetix.hostbackend.Entity.Exceptions.NotRegisteredException;
 import com.idetix.hostbackend.Entity.Exceptions.NotYetUsedException;
 import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
+import com.idetix.hostbackend.Entity.GuestEntity;
+import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
+import com.idetix.hostbackend.Service.GuestEntityService;
 import com.idetix.hostbackend.Service.TerminalEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +23,21 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class TerminalAccessController {
+public class AccessController {
     @Autowired
     private TerminalEntityService terminalEntityService;
+    @Autowired
+    private GuestEntityService guestEntityService;
 
 
     @PostMapping("/registerTerminal")
-    public TerminalEntity registerTerminal(
+    public UUID registerTerminal(
             @RequestParam String secret,
             @RequestParam ArrayList<String> ticketType,
             @RequestParam String areaAccessTo)
     {
         try {
-            return terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo);
+            return terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo).getTerminalId();
         } catch (WrongSecretCodeException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Wrong Secret Code, Try again", e);
@@ -41,9 +46,9 @@ public class TerminalAccessController {
 
 
     @GetMapping("/getTerminalStatus")
-    public TerminalEntity getTerminalStatus(@RequestParam UUID terminalId) {
+    public RequestStatus getTerminalStatus(@RequestParam UUID terminalId) {
         try {
-            return terminalEntityService.getTerminalStatus(terminalId);
+            return terminalEntityService.getTerminalStatus(terminalId).getRequestStatus();
         } catch (NotRegisteredException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "This Terminal has not been registered", e);
@@ -52,9 +57,9 @@ public class TerminalAccessController {
 
 
     @PostMapping("/NewSecretCode")
-    public TerminalEntity getNewSecretCode(@RequestParam UUID terminalId) {
+    public String getNewSecretCode(@RequestParam UUID terminalId) {
         try {
-            return terminalEntityService.getNewSecretCode(terminalId);
+            return terminalEntityService.getNewSecretCode(terminalId).getRandId();
         } catch (NotRegisteredException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "This Terminal has not been registered", e);

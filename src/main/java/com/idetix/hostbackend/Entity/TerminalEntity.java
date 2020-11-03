@@ -23,6 +23,5 @@ public class TerminalEntity {
     private ArrayList<String> ticketType;
     private String areaAccessTo;
     private int numberOfTickets;
-    private boolean responseDone;
-    private boolean accessAllowed;
+    private RequestStatus requestStatus;
 }

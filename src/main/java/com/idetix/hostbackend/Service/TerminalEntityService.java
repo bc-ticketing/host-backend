@@ -4,6 +4,7 @@ import com.idetix.hostbackend.Entity.Exceptions.AllreadyRegisteredException;
 import com.idetix.hostbackend.Entity.Exceptions.NotRegisteredException;
 import com.idetix.hostbackend.Entity.Exceptions.NotYetUsedException;
 import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
+import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Repository.TerminalEntityRepository;
 import com.idetix.hostbackend.Service.Blockchain.BlockchainService;
@@ -38,8 +39,7 @@ public class TerminalEntityService {
         toSave.setRandId(getNewId());
         toSave.setTicketType(ticketType);
         toSave.setNumberOfTickets(0);
-        toSave.setAccessAllowed(false);
-        toSave.setResponseDone(false);
+        toSave.setRequestStatus(RequestStatus.PENDING);
         repository.save(toSave);
         return toSave;
     }
@@ -67,7 +67,7 @@ public class TerminalEntityService {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
         TerminalEntity toModify = repository.findById(terminalId).orElse(null);
-        if (toModify.isResponseDone()){
+        if (toModify.getRequestStatus()!=RequestStatus.PENDING ){
             //TODO: Change the UserStatus to entered
 
             toModify.setRandId(getNewId());
