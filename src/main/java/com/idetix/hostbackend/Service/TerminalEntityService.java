@@ -41,9 +41,11 @@ public class TerminalEntityService {
         toSave.setRandId(getNewId());
         toSave.setTicketType(ticketType);
         toSave.setNumberOfTickets(0);
+        toSave.setAreaAccessTo(areaAccessTo);
         toSave.setRequestStatus(RequestStatus.PENDING);
         repository.save(toSave);
-        return toSave;
+        return repository.findById(toSave.getTerminalId()).orElse(null);
+
     }
 
 

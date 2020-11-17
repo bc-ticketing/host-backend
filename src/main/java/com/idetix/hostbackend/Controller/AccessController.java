@@ -2,7 +2,6 @@ package com.idetix.hostbackend.Controller;
 
 
 import com.idetix.hostbackend.Entity.Exceptions.*;
-import com.idetix.hostbackend.Entity.GuestEntity;
 import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Service.GuestEntityService;
@@ -13,13 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 public class AccessController {
     @Autowired
     private TerminalEntityService terminalEntityService;
@@ -31,10 +30,11 @@ public class AccessController {
     public UUID registerTerminal(
             @RequestParam String secret,
             @RequestParam ArrayList<String> ticketType,
-            @RequestParam String areaAccessTo)
-    {
+            @RequestParam String areaAccessTo) {
         try {
-            return terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo).getTerminalId();
+            TerminalEntity toReturn = terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo);
+            System.out.println(toReturn.terminalId);
+            return toReturn.terminalId;
         } catch (WrongSecretCodeException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Wrong Secret Code, Try again", e);
@@ -83,9 +83,9 @@ public class AccessController {
             @RequestParam String RandId,
             @RequestParam int numberOfGuest,
             @RequestParam String signature,
-            @RequestParam String ethAddress){
+            @RequestParam String ethAddress) {
         try {
-            return terminalEntityService.verifyOwnershipOfTicket(RandId,numberOfGuest,signature,ethAddress);
+            return terminalEntityService.verifyOwnershipOfTicket(RandId, numberOfGuest, signature, ethAddress);
         } catch (SignatureMismatchException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Provided Signature does not match", e);

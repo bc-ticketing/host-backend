@@ -1,8 +1,10 @@
 package com.idetix.hostbackend.Entity;
 
+import com.idetix.hostbackend.Service.StringListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,10 +19,12 @@ import java.util.UUID;
 public class TerminalEntity {
     @Id
     @GeneratedValue
-    @Column(name="TERMINALID", unique = true)
-    private UUID terminalId;
+    @Column(name = "TERMINALID",columnDefinition = "uuid",updatable = false, unique = true)
+    @Type(type="org.hibernate.type.UUIDCharType")
+    public UUID terminalId;
     private String randId;
-    private ArrayList<String> ticketType;
+    @Convert(converter = StringListConverter.class)
+    private List<String> ticketType;
     private String areaAccessTo;
     private int numberOfTickets;
     private RequestStatus requestStatus;
