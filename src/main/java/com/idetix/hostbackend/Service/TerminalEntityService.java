@@ -1,9 +1,7 @@
 package com.idetix.hostbackend.Service;
 
-import com.idetix.hostbackend.Entity.Exceptions.AllreadyRegisteredException;
-import com.idetix.hostbackend.Entity.Exceptions.NotRegisteredException;
-import com.idetix.hostbackend.Entity.Exceptions.NotYetUsedException;
-import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
+import com.idetix.hostbackend.Entity.Exceptions.*;
+import com.idetix.hostbackend.Entity.GuestEntity;
 import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Repository.TerminalEntityRepository;
@@ -23,6 +21,10 @@ public class TerminalEntityService {
     private TerminalEntityRepository repository;
     @Autowired
     private SecurityService securityService;
+    @Autowired
+    private GuestEntityService guestEntityService;
+    @Autowired
+    private BlockchainService blockchainService;
     private final String secret;
 
     @Autowired
@@ -76,6 +78,20 @@ public class TerminalEntityService {
         return toModify;
     }
 
+    public boolean verifyOwnershipOfTicket(String randId, int numberOfGuest, String signature, String ethAddress) throws UnknownTerminalException,SignatureMismatchException {
+        List<TerminalEntity> AccessRequestTerminals = repository.findByRandId(randId);
+        if(AccessRequestTerminals.isEmpty()){
+            throw new UnknownTerminalException("The RandId does not correspond to a Terminal");
+        }
+        TerminalEntity AccessRequestTerminal = AccessRequestTerminals.get(0);
+        if (securityService.verifyAddressFromSignature(ethAddress,signature,randId)){
+            throw new SignatureMismatchException("Provided Signature does not match");
+        }
+
+
+        return true;
+
+    }
 
     private String getNewId(){
         String candidateId = securityService.getAlphaNumericString(42);
@@ -84,5 +100,6 @@ public class TerminalEntityService {
         }
         return candidateId;
     }
+
 
 }

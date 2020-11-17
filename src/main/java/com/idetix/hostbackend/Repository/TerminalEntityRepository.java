@@ -8,5 +8,5 @@ import java.util.UUID;
 
 
 public interface TerminalEntityRepository extends JpaRepository<TerminalEntity, UUID> {
-    List<TerminalEntity> findByRandId(String terminalId);
+    List<TerminalEntity> findByRandId(String randId);
 }

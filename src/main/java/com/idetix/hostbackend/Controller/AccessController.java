@@ -1,10 +1,7 @@
 package com.idetix.hostbackend.Controller;
 
 
-import com.idetix.hostbackend.Entity.Exceptions.AllreadyRegisteredException;
-import com.idetix.hostbackend.Entity.Exceptions.NotRegisteredException;
-import com.idetix.hostbackend.Entity.Exceptions.NotYetUsedException;
-import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
+import com.idetix.hostbackend.Entity.Exceptions.*;
 import com.idetix.hostbackend.Entity.GuestEntity;
 import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
@@ -77,6 +74,24 @@ public class AccessController {
         } catch (NotRegisteredException e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "This Terminal has not been registered", e);
+        }
+    }
+
+
+    @PostMapping("/verifyOwnershipOfTicket")
+    public boolean verifyOwnershipOfTicket(
+            @RequestParam String RandId,
+            @RequestParam int numberOfGuest,
+            @RequestParam String signature,
+            @RequestParam String ethAddress){
+        try {
+            return terminalEntityService.verifyOwnershipOfTicket(RandId,numberOfGuest,signature,ethAddress);
+        } catch (SignatureMismatchException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Provided Signature does not match", e);
+        } catch (UnknownTerminalException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The RandId does not correspond to a Terminal", e);
         }
     }
 
