@@ -3,6 +3,7 @@ package com.idetix.hostbackend.Controller;
 
 import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
+import com.idetix.hostbackend.Entity.VenueArea;
 import com.idetix.hostbackend.Service.GuestEntityService;
 import com.idetix.hostbackend.Service.TerminalEntityService;
 import lombok.SneakyThrows;
@@ -29,8 +30,9 @@ public class AccessController {
     public UUID registerTerminal(
             @RequestParam String secret,
             @RequestParam(required = false) ArrayList<String> ticketType,
-            @RequestParam String areaAccessTo) {
-        TerminalEntity toReturn = terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo);
+            @RequestParam VenueArea areaAccessFrom,
+            @RequestParam VenueArea areaAccessTo) {
+        TerminalEntity toReturn = terminalEntityService.registerTerminal(secret, ticketType, areaAccessFrom, areaAccessTo);
         return toReturn.terminalId;
     }
 
@@ -39,6 +41,12 @@ public class AccessController {
     @GetMapping("/getTerminalStatus")
     public RequestStatus getTerminalStatus(@RequestParam UUID terminalId) {
         return terminalEntityService.getTerminalStatus(terminalId).getRequestStatus();
+    }
+
+    @SneakyThrows
+    @GetMapping("/getNumberOfTicketsSelected")
+    public int getNumberOfTicketsSelected(@RequestParam UUID terminalId) {
+        return terminalEntityService.getNumberOfTicketsSelected(terminalId).getNumberOfTickets();
     }
 
 

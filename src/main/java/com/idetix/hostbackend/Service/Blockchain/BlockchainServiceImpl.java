@@ -1,5 +1,6 @@
 package com.idetix.hostbackend.Service.Blockchain;
 
+import com.idetix.hostbackend.Entity.Exceptions.BlockChainComunicationException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import org.web3j.protocol.http.HttpService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class BlockchainServiceImpl implements BlockchainService {
@@ -71,25 +73,56 @@ public class BlockchainServiceImpl implements BlockchainService {
 //        return true;
 //    }
 //
-    public int getTicketAmountForAddress (String ethAddress) {
-        try {
+    public int getGenerallTicketAmountForAddress (String ethAddress) throws BlockChainComunicationException {
             Function function = new Function("totalTickets", // Function name
                     Arrays.asList(new Address(ethAddress)), // input parameters
                     Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
 
             String encodedFunction = FunctionEncoder.encode(function);
-            EthCall response = web3.ethCall(
+        EthCall response = null;
+        try {
+            response = web3.ethCall(
                     Transaction.createEthCallTransaction(credentials.getAddress(), eventContractAddress, encodedFunction),
             DefaultBlockParameterName.LATEST).sendAsync().get();
+        } catch (InterruptedException e) {
+            throw new BlockChainComunicationException(e.getMessage());
+        } catch (ExecutionException e) {
+            throw new BlockChainComunicationException(e.getMessage());
+        }
+
+        List<Type> someTypes = FunctionReturnDecoder.decode(
+                    response.getValue(), function.getOutputParameters());
+            Uint256 uint256= (Uint256) someTypes.get(0);
+            return uint256.getValue().intValue();
+
+    }
+
+    @Override
+    public int getTicketAmountForType(String ethAddress, List<String> ticketTypes) throws BlockChainComunicationException {
+        int amountOfTickets = 0;
+        for (String ticketType:ticketTypes){
+            Function function = new Function("tickets", // Function name
+                    Arrays.asList(new Uint256(Long.decode(ticketType)),new Address(ethAddress)), // input parameters
+                    Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
+
+            String encodedFunction = FunctionEncoder.encode(function);
+            EthCall response = null;
+            try {
+                response = web3.ethCall(
+                        Transaction.createEthCallTransaction(credentials.getAddress(), eventContractAddress, encodedFunction),
+                        DefaultBlockParameterName.LATEST).sendAsync().get();
+            } catch (InterruptedException e) {
+                throw new BlockChainComunicationException(e.getMessage());
+            } catch (ExecutionException e) {
+                throw new BlockChainComunicationException(e.getMessage());
+            }
 
             List<Type> someTypes = FunctionReturnDecoder.decode(
                     response.getValue(), function.getOutputParameters());
-            Uint8 uint8= (Uint8) someTypes.get(0);
-            return uint8.getValue().intValue();
-
-        } catch (Exception e) {
-            return -1;
+            Uint256 uint256= (Uint256) someTypes.get(0);
+            amountOfTickets = amountOfTickets + uint256.getValue().intValue();
         }
+        return amountOfTickets;
     }
 
 }

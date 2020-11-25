@@ -4,21 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Guest_Entity_TBL")
 public class GuestEntity {
 
-    @Id
-    @Column(name="ETHADDRESS", unique = true)
-    private String ethAddress;
-    private String currentArea;
+    @EmbeddedId
+    private GuestID guestID;
+    private int amountOfGuests;
+
+    public GuestEntity(String ethAddress, VenueArea venueArea, int amountOfGuests){
+        this.guestID= new GuestID(ethAddress,venueArea);
+        this.amountOfGuests= amountOfGuests;
+    }
 
 }
