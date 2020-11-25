@@ -76,6 +76,7 @@ public class TerminalEntityService {
 
             toModify.setRandId(getNewId());
             toModify.setRequestStatus(RequestStatus.PENDING);
+            repository.save(toModify);
         }
         else{ throw new NotYetUsedException("The Secret Code has not been used yet");}
         return toModify;
@@ -90,10 +91,7 @@ public class TerminalEntityService {
         if (securityService.verifyAddressFromSignature(ethAddress,signature,randId)){
             throw new SignatureMismatchException("Provided Signature does not match");
         }
-
-
         return true;
-
     }
 
     private String getNewId(){
