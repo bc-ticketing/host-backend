@@ -19,7 +19,7 @@ import java.util.UUID;
 public class TerminalEntity {
     @Id
     @GeneratedValue
-    @Column(name = "TERMINALID",columnDefinition = "uuid",updatable = false, unique = true)
+    @Column(name = "TERMINALID")
     @Type(type="org.hibernate.type.UUIDCharType")
     public UUID terminalId;
     private String randId;
