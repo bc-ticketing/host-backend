@@ -1,5 +1,5 @@
 package com.idetix.hostbackend.Entity;
 
 public enum RequestStatus {
-    PENDING,GRANTED,DENIED
+    PENDING,GRANTED,DENIED,NOTYETCREATED
 }
