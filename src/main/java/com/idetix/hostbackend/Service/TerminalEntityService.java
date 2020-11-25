@@ -38,13 +38,12 @@ public class TerminalEntityService {
             throw new WrongSecretCodeException("Wronq secret code try again!");
         }
         TerminalEntity toSave = new TerminalEntity();
-        toSave.setRandId(getNewId());
         if (ticketType != null && !ticketType.isEmpty()) {
             toSave.setTicketType(ticketType);
         }
         toSave.setNumberOfTickets(0);
         toSave.setAreaAccessTo(areaAccessTo);
-        toSave.setRequestStatus(RequestStatus.PENDING);
+        toSave.setRequestStatus(RequestStatus.NOTYETCREATED);
         repository.save(toSave);
         return toSave;
     }
