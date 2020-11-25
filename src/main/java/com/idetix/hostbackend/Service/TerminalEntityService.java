@@ -75,6 +75,7 @@ public class TerminalEntityService {
             //TODO: Change the UserStatus to entered
 
             toModify.setRandId(getNewId());
+            toModify.setRequestStatus(RequestStatus.PENDING);
         }
         else{ throw new NotYetUsedException("The Secret Code has not been used yet");}
         return toModify;
