@@ -29,7 +29,7 @@ public class AccessController {
     @PostMapping("/registerTerminal")
     public UUID registerTerminal(
             @RequestParam String secret,
-            @RequestParam ArrayList<String> ticketType,
+            @RequestParam(required = false) ArrayList<String> ticketType,
             @RequestParam String areaAccessTo) {
         try {
             TerminalEntity toReturn = terminalEntityService.registerTerminal(secret, ticketType, areaAccessTo);
