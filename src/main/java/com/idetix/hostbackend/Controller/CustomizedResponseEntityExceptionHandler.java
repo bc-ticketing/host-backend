@@ -1,6 +1,5 @@
 package com.idetix.hostbackend.Controller;
 
-import com.idetix.hostbackend.Entity.Exceptions.WrongSecretCodeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

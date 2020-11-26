@@ -1,10 +1,10 @@
 package com.idetix.hostbackend.Entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +15,9 @@ public class GuestEntity {
     private GuestID guestID;
     private int amountOfGuests;
 
-    public GuestEntity(String ethAddress, VenueArea venueArea, int amountOfGuests){
-        this.guestID= new GuestID(ethAddress,venueArea);
-        this.amountOfGuests= amountOfGuests;
+    public GuestEntity(String ethAddress, VenueArea venueArea, int amountOfGuests) {
+        this.guestID = new GuestID(ethAddress, venueArea);
+        this.amountOfGuests = amountOfGuests;
     }
 
 }

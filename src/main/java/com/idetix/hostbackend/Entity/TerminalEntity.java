@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +19,7 @@ public class TerminalEntity {
     @Id
     @GeneratedValue
     @Column(name = "TERMINALID")
-    @Type(type="org.hibernate.type.UUIDCharType")
+    @Type(type = "org.hibernate.type.UUIDCharType")
     public UUID terminalId;
     private String randId;
     @Convert(converter = StringListConverter.class)

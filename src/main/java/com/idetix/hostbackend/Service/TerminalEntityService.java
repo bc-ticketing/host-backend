@@ -17,6 +17,7 @@ import java.util.UUID;
 
 @Service
 public class TerminalEntityService {
+    private final String secret;
     @Autowired
     private TerminalEntityRepository repository;
     @Autowired
@@ -25,7 +26,6 @@ public class TerminalEntityService {
     private GuestEntityService guestEntityService;
     @Autowired
     private BlockchainService blockchainService;
-    private final String secret;
 
     @Autowired
     public TerminalEntityService(@Value("${RegistrationSecret}") String secret) {
@@ -153,7 +153,7 @@ public class TerminalEntityService {
             }
         } else {
             int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessfrom());
-            if (guestInFromArea < numberOfGuest){
+            if (guestInFromArea < numberOfGuest) {
                 accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                 repository.save(accessRequestTerminal);
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");

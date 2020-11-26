@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Embeddable;
-
 import java.io.Serializable;
 
 @AllArgsConstructor
@@ -20,7 +19,7 @@ public class GuestID implements Serializable {
     private VenueArea venueArea;
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -31,7 +30,7 @@ public class GuestID implements Serializable {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         int result = ethAddress.hashCode();
         result = 31 * result + venueArea.hashCode();
         return result;

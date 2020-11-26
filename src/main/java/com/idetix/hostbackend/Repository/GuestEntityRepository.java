@@ -8,5 +8,5 @@ import java.util.List;
 
 
 public interface GuestEntityRepository extends JpaRepository<GuestEntity, GuestID> {
-    List<GuestEntity>findByGuestID_EthAddress(String ethAddress);
+    List<GuestEntity> findByGuestID_EthAddress(String ethAddress);
 }

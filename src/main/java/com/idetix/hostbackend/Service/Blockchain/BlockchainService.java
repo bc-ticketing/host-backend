@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface BlockchainService {
     int getGeneralTicketAmountForAddress(String ethAddress) throws BlockChainComunicationException;
+
     int getTicketAmountForType(String ethAddress, List<String> ticketTypes) throws BlockChainComunicationException;
 
 }

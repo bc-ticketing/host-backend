@@ -1,10 +1,9 @@
 package com.idetix.hostbackend.Service;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.util.Arrays;
+import java.util.List;
 
 @Converter
 public class StringListConverter implements AttributeConverter<List<String>, String> {
@@ -14,15 +13,13 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
     public String convertToDatabaseColumn(List<String> stringList) {
         if (stringList != null && !stringList.isEmpty()) {
             return String.join(SPLIT_CHAR, stringList);
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
     public List<String> convertToEntityAttribute(String string) {
         if (string != null) {
             return Arrays.asList(string.split(SPLIT_CHAR));
-        }
-        else return null;
+        } else return null;
     }
 }

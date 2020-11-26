@@ -42,34 +42,36 @@ public class BlockchainServiceImpl implements BlockchainService {
     }
 
     public int getGeneralTicketAmountForAddress(String ethAddress) throws BlockChainComunicationException {
-            Function function = new Function("totalTickets", // Function name
-                    Collections.singletonList(new Address(ethAddress)), // input parameters
-                    Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
+        Function function = new Function("totalTickets", // Function name
+                Collections.singletonList(new Address(ethAddress)), // input parameters
+                Collections.singletonList(new TypeReference<Uint256>() {
+                })); // return parameters
 
-            String encodedFunction = FunctionEncoder.encode(function);
+        String encodedFunction = FunctionEncoder.encode(function);
         EthCall response;
         try {
             response = web3.ethCall(
                     Transaction.createEthCallTransaction(credentials.getAddress(), eventContractAddress, encodedFunction),
-            DefaultBlockParameterName.LATEST).sendAsync().get();
+                    DefaultBlockParameterName.LATEST).sendAsync().get();
         } catch (InterruptedException | ExecutionException e) {
             throw new BlockChainComunicationException(e.getMessage());
         }
 
         List<Type> someTypes = FunctionReturnDecoder.decode(
-                    response.getValue(), function.getOutputParameters());
-            Uint256 uint256= (Uint256) someTypes.get(0);
-            return uint256.getValue().intValue();
+                response.getValue(), function.getOutputParameters());
+        Uint256 uint256 = (Uint256) someTypes.get(0);
+        return uint256.getValue().intValue();
 
     }
 
     @Override
     public int getTicketAmountForType(String ethAddress, List<String> ticketTypes) throws BlockChainComunicationException {
         int amountOfTickets = 0;
-        for (String ticketType:ticketTypes){
+        for (String ticketType : ticketTypes) {
             Function function = new Function("tickets", // Function name
-                    Arrays.asList(new Uint256(Long.decode(ticketType)),new Address(ethAddress)), // input parameters
-                    Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
+                    Arrays.asList(new Uint256(Long.decode(ticketType)), new Address(ethAddress)), // input parameters
+                    Collections.singletonList(new TypeReference<Uint256>() {
+                    })); // return parameters
 
             String encodedFunction = FunctionEncoder.encode(function);
             EthCall response;
@@ -83,7 +85,7 @@ public class BlockchainServiceImpl implements BlockchainService {
 
             List<Type> someTypes = FunctionReturnDecoder.decode(
                     response.getValue(), function.getOutputParameters());
-            Uint256 uint256= (Uint256) someTypes.get(0);
+            Uint256 uint256 = (Uint256) someTypes.get(0);
             amountOfTickets = amountOfTickets + uint256.getValue().intValue();
         }
         return amountOfTickets;
