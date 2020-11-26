@@ -1,7 +1,6 @@
 package com.idetix.hostbackend.Service;
 
 import com.idetix.hostbackend.Entity.Exceptions.*;
-import com.idetix.hostbackend.Entity.GuestEntity;
 import com.idetix.hostbackend.Entity.RequestStatus;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Entity.VenueArea;
@@ -36,10 +35,10 @@ public class TerminalEntityService {
 
     public TerminalEntity registerTerminal(String secret, ArrayList<String> ticketType, VenueArea areaAccessFrom, VenueArea areaAccessTo) throws WrongSecretCodeException, NoAcessAreaProvidedException {
         if (!secret.contentEquals(this.secret)) {
-            throw new WrongSecretCodeException("Wronq secret code try again!");
+            throw new WrongSecretCodeException("Wrong secret code try again!");
         }
         if (areaAccessTo == null) {
-            throw new NoAcessAreaProvidedException("Please Provide Area acessed after passing this Terminal!");
+            throw new NoAcessAreaProvidedException("Please Provide Area accessed after passing this Terminal!");
         }
         if (areaAccessFrom == null) {
             throw new NoAcessAreaProvidedException("Please Provide Area before this Terminal!");
@@ -61,6 +60,7 @@ public class TerminalEntityService {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
         TerminalEntity toDelete = repository.findById(terminalId).orElse(null);
+        assert toDelete != null;
         repository.delete(toDelete);
         return true;
     }
@@ -69,16 +69,14 @@ public class TerminalEntityService {
         if (repository.findById(terminalId).orElse(null) == null) {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
-        TerminalEntity toReturn = repository.findById(terminalId).orElse(null);
-        return toReturn;
+        return repository.findById(terminalId).orElse(null);
     }
 
     public TerminalEntity getNumberOfTicketsSelected(UUID terminalId) throws NotRegisteredException {
         if (repository.findById(terminalId).orElse(null) == null) {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
-        TerminalEntity toReturn = repository.findById(terminalId).orElse(null);
-        return toReturn;
+        return repository.findById(terminalId).orElse(null);
     }
 
 
@@ -87,6 +85,7 @@ public class TerminalEntityService {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
         TerminalEntity toModify = repository.findById(terminalId).orElse(null);
+        assert toModify != null;
         if (toModify.getRequestStatus() != RequestStatus.PENDING) {
             //TODO: Change the UserStatus to entered
             if (toModify.getRequestStatus() == RequestStatus.GRANTED) {
@@ -130,7 +129,7 @@ public class TerminalEntityService {
             int totalTickets;
             if (accessRequestTerminal.getTicketType().isEmpty() || accessRequestTerminal.getTicketType() == null) {
                 try {
-                    totalTickets = blockchainService.getGenerallTicketAmountForAddress(ethAddress);
+                    totalTickets = blockchainService.getGeneralTicketAmountForAddress(ethAddress);
                 } catch (BlockChainComunicationException e) {
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                     repository.save(accessRequestTerminal);
@@ -145,16 +144,13 @@ public class TerminalEntityService {
                     throw e;
                 }
             }
-            int allreadyEntered = guestEntityService.getNumberOfGuestInVenue(ethAddress);
-            int remainingTickets = totalTickets - allreadyEntered;
+            int alreadyEntered = guestEntityService.getNumberOfGuestInVenue(ethAddress);
+            int remainingTickets = totalTickets - alreadyEntered;
             if (numberOfGuest > remainingTickets) {
                 accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                 repository.save(accessRequestTerminal);
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");
             }
-            accessRequestTerminal.setNumberOfTickets(numberOfGuest);
-            accessRequestTerminal.setEthAddress(ethAddress);
-            accessRequestTerminal.setRequestStatus(RequestStatus.GRANTED);
         } else {
             int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessfrom());
             if (guestInFromArea < numberOfGuest){
@@ -162,10 +158,10 @@ public class TerminalEntityService {
                 repository.save(accessRequestTerminal);
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");
             }
-            accessRequestTerminal.setNumberOfTickets(numberOfGuest);
-            accessRequestTerminal.setEthAddress(ethAddress);
-            accessRequestTerminal.setRequestStatus(RequestStatus.GRANTED);
         }
+        accessRequestTerminal.setNumberOfTickets(numberOfGuest);
+        accessRequestTerminal.setEthAddress(ethAddress);
+        accessRequestTerminal.setRequestStatus(RequestStatus.GRANTED);
         repository.save(accessRequestTerminal);
         return true;
     }

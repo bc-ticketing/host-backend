@@ -12,7 +12,6 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
-import org.web3j.abi.datatypes.generated.Uint8;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -73,20 +72,18 @@ public class BlockchainServiceImpl implements BlockchainService {
 //        return true;
 //    }
 //
-    public int getGenerallTicketAmountForAddress (String ethAddress) throws BlockChainComunicationException {
+    public int getGeneralTicketAmountForAddress(String ethAddress) throws BlockChainComunicationException {
             Function function = new Function("totalTickets", // Function name
-                    Arrays.asList(new Address(ethAddress)), // input parameters
+                    Collections.singletonList(new Address(ethAddress)), // input parameters
                     Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
 
             String encodedFunction = FunctionEncoder.encode(function);
-        EthCall response = null;
+        EthCall response;
         try {
             response = web3.ethCall(
                     Transaction.createEthCallTransaction(credentials.getAddress(), eventContractAddress, encodedFunction),
             DefaultBlockParameterName.LATEST).sendAsync().get();
-        } catch (InterruptedException e) {
-            throw new BlockChainComunicationException(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new BlockChainComunicationException(e.getMessage());
         }
 
@@ -106,14 +103,12 @@ public class BlockchainServiceImpl implements BlockchainService {
                     Collections.singletonList(new TypeReference<Uint256>() {})); // return parameters
 
             String encodedFunction = FunctionEncoder.encode(function);
-            EthCall response = null;
+            EthCall response;
             try {
                 response = web3.ethCall(
                         Transaction.createEthCallTransaction(credentials.getAddress(), eventContractAddress, encodedFunction),
                         DefaultBlockParameterName.LATEST).sendAsync().get();
-            } catch (InterruptedException e) {
-                throw new BlockChainComunicationException(e.getMessage());
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 throw new BlockChainComunicationException(e.getMessage());
             }
 

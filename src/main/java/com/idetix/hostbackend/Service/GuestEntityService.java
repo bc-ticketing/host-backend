@@ -6,7 +6,6 @@ import com.idetix.hostbackend.Entity.GuestID;
 import com.idetix.hostbackend.Entity.TerminalEntity;
 import com.idetix.hostbackend.Entity.VenueArea;
 import com.idetix.hostbackend.Repository.GuestEntityRepository;
-import com.idetix.hostbackend.Repository.TerminalEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +22,7 @@ public class GuestEntityService {
         if (terminalEntity.getAreaAccessfrom()==VenueArea.ENTRANCE){
             if (getNumberOfGuestInArea(terminalEntity.getEthAddress(),terminalEntity.getAreaAccessTo())!=0){
                 GuestEntity toUpdate = repository.findById(new GuestID(terminalEntity.getEthAddress(),terminalEntity.getAreaAccessTo())).orElse(null);
+                assert toUpdate != null;
                 toUpdate.setAmountOfGuests(toUpdate.getAmountOfGuests()+terminalEntity.getNumberOfTickets());
                 repository.save(toUpdate);
             }else {
@@ -31,9 +31,11 @@ public class GuestEntityService {
         }else {
             if (getNumberOfGuestInArea(terminalEntity.getEthAddress(),terminalEntity.getAreaAccessTo())!=0) {
                 GuestEntity toUpdate = repository.findById(new GuestID(terminalEntity.getEthAddress(),terminalEntity.getAreaAccessTo())).orElse(null);
+                assert toUpdate != null;
                 toUpdate.setAmountOfGuests(toUpdate.getAmountOfGuests()+terminalEntity.getNumberOfTickets());
                 repository.save(toUpdate);
                 GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessfrom())).orElse(null);
+                assert fromEntity != null;
                 if(fromEntity.getAmountOfGuests() - terminalEntity.getNumberOfTickets() == 0){
                     repository.delete(fromEntity);
                 }else {
@@ -42,6 +44,7 @@ public class GuestEntityService {
                 }
             }else{
                 GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessfrom())).orElse(null);
+                assert fromEntity != null;
                 if(fromEntity.getAmountOfGuests() - terminalEntity.getNumberOfTickets() == 0){
                     repository.delete(fromEntity);
                 }else {
