@@ -41,37 +41,6 @@ public class BlockchainServiceImpl implements BlockchainService {
         this.eventContractAddress = eventContractAddress;
     }
 
-
-
-//    @Override
-//    public boolean saveIdentityProofToChain(String ethAddress, int securityLevel) {
-//        try {
-//            Function function = new Function("approveIdentity", // Function name
-//                    Arrays.asList(new Address(ethAddress), new Uint8(BigInteger.valueOf(securityLevel))), // Function input parameters
-//                    Collections.emptyList()); // Function returned parameters
-//            String txData = FunctionEncoder.encode(function);
-//            TransactionManager txManager = new RawTransactionManager(web3, credentials);
-//
-//            String txHash = txManager.sendTransaction(
-//                    DefaultGasProvider.GAS_PRICE,
-//                    DefaultGasProvider.GAS_LIMIT,
-//                    contractAddress,
-//                    txData,
-//                    BigInteger.ZERO).getTransactionHash();
-//
-//            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(
-//                    web3,
-//                    TransactionManager.DEFAULT_POLLING_FREQUENCY,
-//                    TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
-//
-//            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
-//            System.out.println(txReceipt.getBlockNumber());
-//        } catch (Exception e) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
     public int getGeneralTicketAmountForAddress(String ethAddress) throws BlockChainComunicationException {
             Function function = new Function("totalTickets", // Function name
                     Collections.singletonList(new Address(ethAddress)), // input parameters
