@@ -86,7 +86,7 @@ public class TerminalEntityService {
         }
         TerminalEntity toModify = repository.findById(terminalId).orElse(null);
         assert toModify != null;
-        if (toModify.getRequestStatus() != RequestStatus.PENDING) {
+        if (toModify.getRequestStatus() != RequestStatus.PENDING && toModify.getRequestStatus() != RequestStatus.NOTYETCREATED ) {
             //TODO: Change the UserStatus to entered
             if (toModify.getRequestStatus() == RequestStatus.GRANTED) {
                 guestEntityService.setGuestAsEntered(toModify);
@@ -112,6 +112,9 @@ public class TerminalEntityService {
             UnknownTerminalException,
             SignatureMismatchException,
             NotEnoughtTicketsException {
+        if (numberOfGuest > 1){
+            throw new NotEnoughtTicketsException("You must select a ticket Number more than 0!");
+        }
         List<TerminalEntity> accessRequestTerminals = repository.findByRandId(randId);
         if (accessRequestTerminals.isEmpty()) {
             throw new UnknownTerminalException("The RandId does not correspond to a Terminal");
