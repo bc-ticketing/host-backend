@@ -86,24 +86,27 @@ public class TerminalEntityService {
         }
         TerminalEntity toModify = repository.findById(terminalId).orElse(null);
         assert toModify != null;
-        if (toModify.getRequestStatus() != RequestStatus.PENDING && toModify.getRequestStatus() != RequestStatus.NOTYETCREATED ) {
-            //TODO: Change the UserStatus to entered
+        if (toModify.getRequestStatus() != RequestStatus.PENDING) {
             if (toModify.getRequestStatus() == RequestStatus.GRANTED) {
                 guestEntityService.setGuestAsEntered(toModify);
                 toModify.setRandId(getNewId());
                 toModify.setRequestStatus(RequestStatus.PENDING);
                 toModify.setEthAddress(null);
-                repository.save(toModify);
             }
-            if (toModify.getRequestStatus() == RequestStatus.DENIED) {
+            else if (toModify.getRequestStatus() == RequestStatus.DENIED) {
                 toModify.setRandId(getNewId());
                 toModify.setRequestStatus(RequestStatus.PENDING);
                 toModify.setEthAddress(null);
-                repository.save(toModify);
+            }
+            else if (toModify.getRequestStatus() == RequestStatus.NOTYETCREATED){
+                toModify.setRandId(getNewId());
+                toModify.setRequestStatus(RequestStatus.PENDING);
+                toModify.setEthAddress(null);
             }
         } else {
             throw new NotYetUsedException("The Secret Code has not been used yet");
         }
+        repository.save(toModify);
         return toModify;
     }
 
@@ -112,7 +115,7 @@ public class TerminalEntityService {
             UnknownTerminalException,
             SignatureMismatchException,
             NotEnoughtTicketsException {
-        if (numberOfGuest > 1){
+        if (numberOfGuest > 1) {
             throw new NotEnoughtTicketsException("You must select a ticket Number more than 0!");
         }
         List<TerminalEntity> accessRequestTerminals = repository.findByRandId(randId);
@@ -155,6 +158,8 @@ public class TerminalEntityService {
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");
             }
         } else {
+
+            //TO-DO: check if has ticket of type needed
             int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessfrom());
             if (guestInFromArea < numberOfGuest) {
                 accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
@@ -176,6 +181,4 @@ public class TerminalEntityService {
         }
         return candidateId;
     }
-
-
 }
