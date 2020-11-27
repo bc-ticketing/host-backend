@@ -131,7 +131,7 @@ public class TerminalEntityService {
         //Case 1: Enter into Venue:
         // check if the Guest is in the required before area
         // when Area from is ENTRANCE, no check needed
-        if (accessRequestTerminal.getAreaAccessfrom() == VenueArea.ENTRANCE) {
+        if (accessRequestTerminal.getAreaAccessFrom() == VenueArea.ENTRANCE) {
             int totalTickets;
             if (accessRequestTerminal.getTicketType().isEmpty() || accessRequestTerminal.getTicketType() == null) {
                 try {
@@ -158,13 +158,22 @@ public class TerminalEntityService {
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");
             }
         } else {
-
             //TO-DO: check if has ticket of type needed
-            int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessfrom());
-            if (guestInFromArea < numberOfGuest) {
-                accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
-                repository.save(accessRequestTerminal);
-                throw new NotEnoughtTicketsException("You do not have enough Tickets");
+            int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessFrom());
+            int guestInToArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessTo());
+            if(accessRequestTerminal.getTicketType().isEmpty() || accessRequestTerminal.getTicketType() == null){
+                if (guestInFromArea < numberOfGuest) {
+                    accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+                    repository.save(accessRequestTerminal);
+                    throw new NotEnoughtTicketsException("You do not have enough Tickets");
+                }
+            }else {
+                int numberOfRequiredTicketsOwned = blockchainService.getTicketAmountForType(ethAddress, accessRequestTerminal.getTicketType());
+                if (guestInFromArea < numberOfGuest || (numberOfRequiredTicketsOwned - guestInToArea) < numberOfGuest){
+                    accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+                    repository.save(accessRequestTerminal);
+                    throw new NotEnoughtTicketsException("You do not have enough Tickets");
+                }
             }
         }
         accessRequestTerminal.setNumberOfTickets(numberOfGuest);

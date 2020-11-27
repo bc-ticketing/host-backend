@@ -24,7 +24,7 @@ public class TerminalEntity {
     private String randId;
     @Convert(converter = StringListConverter.class)
     private List<String> ticketType;
-    private VenueArea areaAccessfrom;
+    private VenueArea areaAccessFrom;
     private VenueArea areaAccessTo;
     private int numberOfTickets;
     private RequestStatus requestStatus;
