@@ -19,7 +19,7 @@ public class GuestEntityService {
 
 
     public void setGuestAsEntered(TerminalEntity terminalEntity) {
-        if (terminalEntity.getAreaAccessfrom() == VenueArea.ENTRANCE) {
+        if (terminalEntity.getAreaAccessFrom() == VenueArea.ENTRANCE) {
             if (getNumberOfGuestInArea(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessTo()) != 0) {
                 GuestEntity toUpdate = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessTo())).orElse(null);
                 assert toUpdate != null;
@@ -34,7 +34,7 @@ public class GuestEntityService {
                 assert toUpdate != null;
                 toUpdate.setAmountOfGuests(toUpdate.getAmountOfGuests() + terminalEntity.getNumberOfTickets());
                 repository.save(toUpdate);
-                GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessfrom())).orElse(null);
+                GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessFrom())).orElse(null);
                 assert fromEntity != null;
                 if (fromEntity.getAmountOfGuests() - terminalEntity.getNumberOfTickets() == 0) {
                     repository.delete(fromEntity);
@@ -43,7 +43,7 @@ public class GuestEntityService {
                     repository.save(fromEntity);
                 }
             } else {
-                GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessfrom())).orElse(null);
+                GuestEntity fromEntity = repository.findById(new GuestID(terminalEntity.getEthAddress(), terminalEntity.getAreaAccessFrom())).orElse(null);
                 assert fromEntity != null;
                 if (fromEntity.getAmountOfGuests() - terminalEntity.getNumberOfTickets() == 0) {
                     repository.delete(fromEntity);
