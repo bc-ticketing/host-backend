@@ -124,7 +124,7 @@ public class TerminalEntityService {
             throw new UnknownTerminalException("The RandId does not correspond to a Terminal");
         }
         TerminalEntity accessRequestTerminal = accessRequestTerminals.get(0);
-        if (securityService.verifyAddressFromSignature(ethAddress, signature, randId)) {
+        if (!securityService.verifyAddressFromSignature(ethAddress, signature, randId)) {
             accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
             repository.save(accessRequestTerminal);
             throw new SignatureMismatchException("Provided Signature does not match");

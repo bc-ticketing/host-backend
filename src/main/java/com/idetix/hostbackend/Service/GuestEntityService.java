@@ -66,6 +66,9 @@ public class GuestEntityService {
     }
 
     public int getNumberOfGuestInArea(String ethAddress, VenueArea venueArea) {
+        if (repository.findById(new GuestID(ethAddress, venueArea)).orElse(null)== null){
+            return 0;
+        }
         return repository.findById(new GuestID(ethAddress, venueArea)).get().getAmountOfGuests();
     }
 }
