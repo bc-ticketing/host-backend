@@ -48,6 +48,7 @@ public class TerminalEntityService {
             toSave.setTicketType(ticketType);
         }
         toSave.setNumberOfTickets(0);
+        toSave.setAreaAccessFrom(areaAccessFrom);
         toSave.setAreaAccessTo(areaAccessTo);
         toSave.setRequestStatus(RequestStatus.NOTYETCREATED);
         repository.save(toSave);
@@ -115,7 +116,7 @@ public class TerminalEntityService {
             UnknownTerminalException,
             SignatureMismatchException,
             NotEnoughtTicketsException {
-        if (numberOfGuest > 1) {
+        if (numberOfGuest < 1) {
             throw new NotEnoughtTicketsException("You must select a ticket Number more than 0!");
         }
         List<TerminalEntity> accessRequestTerminals = repository.findByRandId(randId);
@@ -133,7 +134,7 @@ public class TerminalEntityService {
         // when Area from is ENTRANCE, no check needed
         if (accessRequestTerminal.getAreaAccessFrom() == VenueArea.ENTRANCE) {
             int totalTickets;
-            if (accessRequestTerminal.getTicketType().isEmpty() || accessRequestTerminal.getTicketType() == null) {
+            if (accessRequestTerminal.getTicketType() == null) {
                 try {
                     totalTickets = blockchainService.getGeneralTicketAmountForAddress(ethAddress);
                 } catch (BlockChainComunicationException e) {
@@ -161,7 +162,7 @@ public class TerminalEntityService {
             //TO-DO: check if has ticket of type needed
             int guestInFromArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessFrom());
             int guestInToArea = guestEntityService.getNumberOfGuestInArea(ethAddress, accessRequestTerminal.getAreaAccessTo());
-            if(accessRequestTerminal.getTicketType().isEmpty() || accessRequestTerminal.getTicketType() == null){
+            if( accessRequestTerminal.getTicketType() == null){
                 if (guestInFromArea < numberOfGuest) {
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                     repository.save(accessRequestTerminal);
