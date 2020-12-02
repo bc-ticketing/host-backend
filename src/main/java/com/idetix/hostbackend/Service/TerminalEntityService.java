@@ -88,6 +88,7 @@ public class TerminalEntityService {
             }
             else if (toModify.getRequestStatus() == RequestStatus.DENIED) {
                 toModify.setRandId(getNewId());
+                toModify.setErrorMessage(null);
                 toModify.setRequestStatus(RequestStatus.PENDING);
                 toModify.setEthAddress(null);
             }
