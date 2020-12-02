@@ -29,4 +29,5 @@ public class TerminalEntity {
     private int numberOfTickets;
     private RequestStatus requestStatus;
     private String ethAddress;
+    private String errorMessage;
 }

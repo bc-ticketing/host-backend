@@ -39,15 +39,20 @@ public class AccessController {
     @SneakyThrows
     @GetMapping("/getTerminalStatus")
     public RequestStatus getTerminalStatus(@RequestParam UUID terminalId) {
-        return terminalEntityService.getTerminalStatus(terminalId).getRequestStatus();
+        return terminalEntityService.getTerminalEntity(terminalId).getRequestStatus();
     }
 
     @SneakyThrows
     @GetMapping("/getNumberOfTicketsSelected")
     public int getNumberOfTicketsSelected(@RequestParam UUID terminalId) {
-        return terminalEntityService.getNumberOfTicketsSelected(terminalId).getNumberOfTickets();
+        return terminalEntityService.getTerminalEntity(terminalId).getNumberOfTickets();
     }
 
+    @SneakyThrows
+    @GetMapping("/getErrorMessage")
+    public String getErrorMessage(@RequestParam UUID terminalId) {
+        return terminalEntityService.getTerminalEntity(terminalId).getErrorMessage();
+    }
 
     @SneakyThrows
     @PostMapping("/NewSecretCode")

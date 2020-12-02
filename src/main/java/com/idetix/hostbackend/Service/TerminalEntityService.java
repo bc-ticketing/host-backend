@@ -66,20 +66,12 @@ public class TerminalEntityService {
         return true;
     }
 
-    public TerminalEntity getTerminalStatus(UUID terminalId) throws NotRegisteredException {
+    public TerminalEntity getTerminalEntity(UUID terminalId) throws NotRegisteredException {
         if (repository.findById(terminalId).orElse(null) == null) {
             throw new NotRegisteredException("This Terminal has not been registered");
         }
         return repository.findById(terminalId).orElse(null);
     }
-
-    public TerminalEntity getNumberOfTicketsSelected(UUID terminalId) throws NotRegisteredException {
-        if (repository.findById(terminalId).orElse(null) == null) {
-            throw new NotRegisteredException("This Terminal has not been registered");
-        }
-        return repository.findById(terminalId).orElse(null);
-    }
-
 
     public TerminalEntity getNewSecretCode(UUID terminalId) throws NotRegisteredException, NotYetUsedException {
         if (repository.findById(terminalId).orElse(null) == null) {
@@ -126,6 +118,7 @@ public class TerminalEntityService {
         TerminalEntity accessRequestTerminal = accessRequestTerminals.get(0);
         if (!securityService.verifyAddressFromSignature(ethAddress, signature, randId)) {
             accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+            accessRequestTerminal.setErrorMessage("Provided Signature does not match");
             repository.save(accessRequestTerminal);
             throw new SignatureMismatchException("Provided Signature does not match");
         }
@@ -138,6 +131,7 @@ public class TerminalEntityService {
                 try {
                     totalTickets = blockchainService.getGeneralTicketAmountForAddress(ethAddress);
                 } catch (BlockChainComunicationException e) {
+                    accessRequestTerminal.setErrorMessage(e.getMessage());
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                     repository.save(accessRequestTerminal);
                     throw e;
@@ -146,6 +140,7 @@ public class TerminalEntityService {
                 try {
                     totalTickets = blockchainService.getTicketAmountForType(ethAddress, accessRequestTerminal.getTicketType());
                 } catch (BlockChainComunicationException e) {
+                    accessRequestTerminal.setErrorMessage(e.getMessage());
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
                     repository.save(accessRequestTerminal);
                     throw e;
@@ -155,6 +150,7 @@ public class TerminalEntityService {
             int remainingTickets = totalTickets - alreadyEntered;
             if (numberOfGuest > remainingTickets) {
                 accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+                accessRequestTerminal.setErrorMessage("You do not have enough Tickets");
                 repository.save(accessRequestTerminal);
                 throw new NotEnoughtTicketsException("You do not have enough Tickets");
             }
@@ -165,6 +161,7 @@ public class TerminalEntityService {
             if( accessRequestTerminal.getTicketType() == null){
                 if (guestInFromArea < numberOfGuest) {
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+                    accessRequestTerminal.setErrorMessage("You do not have enough Tickets");
                     repository.save(accessRequestTerminal);
                     throw new NotEnoughtTicketsException("You do not have enough Tickets");
                 }
@@ -172,6 +169,7 @@ public class TerminalEntityService {
                 int numberOfRequiredTicketsOwned = blockchainService.getTicketAmountForType(ethAddress, accessRequestTerminal.getTicketType());
                 if (guestInFromArea < numberOfGuest || (numberOfRequiredTicketsOwned - guestInToArea) < numberOfGuest){
                     accessRequestTerminal.setRequestStatus(RequestStatus.DENIED);
+                    accessRequestTerminal.setErrorMessage("You do not have enough Tickets");
                     repository.save(accessRequestTerminal);
                     throw new NotEnoughtTicketsException("You do not have enough Tickets");
                 }
