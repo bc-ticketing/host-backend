@@ -1,0 +1,63 @@
+version: "3"
+services:
+  mysql-service:
+    restart: always
+    image: mysql:5.7
+    networks:
+      - spring-boot-mysql-network
+
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=host_backend
+    expose:
+      - "3306"
+    ports:
+      - "6033:3306"
+
+  identity-approver:
+    image: idetix/hostbackend:latest
+    expose:
+      - "9191"
+    ports:
+      - "9191:9191"
+
+    environment:
+
+      #Datasource
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/host_backend
+      SPRING_DATASOURCE_USERNAME:
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATASOURCE_CONTINUE-ON-ERROR: 'true'
+      SPRING.DATASOURCE.HIKARI.MINIMUM-IDLE: 0
+      SPRING.DATASOURCE.HIKARI.INITIALIZATION-FAIL-TIMEOUT: -1
+
+      #JPA
+      SPRING_JPA_SHOW-SQL: 'true'
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_JPA_HIBERNATE_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL5Dialect
+
+      #SERVLET
+      SPRING_SERVLET_MULTIPART_MAX-FILE-SIZE: 20MB
+      SPRING_SERVLET_MULTIPART_MAX-REQUEST-SIZE: 20MB
+
+      #Blockchain
+      EventContractAddress:
+      BLOCKCHAINPRIVATKEY:
+      BLOCKCHAINPATH:
+
+      #Secret
+      RegistrationSecret:
+
+      #Server
+      SERVER_PORT: 9191
+
+    networks:
+      - spring-boot-mysql-network
+    depends_on:
+      - mysql-service
+
+networks:
+  spring-boot-mysql-network:
+    driver: bridge
+
